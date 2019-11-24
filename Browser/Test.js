@@ -24,7 +24,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Creation of the server
 app.post('/', function(req, res) {
-  console.log("Hello")
+  console.log("Hello");
+});
+
+app.post('/login', function(req, res) {
+  console.log("Hello");
+  res.send(index.html);
 });
 
 //Listen to the python program for data
