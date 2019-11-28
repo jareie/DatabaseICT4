@@ -1,68 +1,69 @@
 import csv
-csvfile = open('measles.csv')
+csvfile = open('Browser/measles.csv')
 reader = csv.DictReader(csvfile)
 
 
-def CreateDate(String):
-    output = []
-    temporary = String.split("-")
-    for i in temporary:
-        output.append(int(i))
-    return output
+def CreateScript(filePath):
+    fileoutput = open(filePath).readlines()
 
-def FindOverlap(startDate1,endDate1,startDate2,endDate2):
-    truths = [False,False,False]
-    if startDate2[0] >= startDate1[0] and startDate2[0] <= endDate1[0]:
-        truths[0] = True
-    
-    if startDate2[1] >= startDate1[1] and startDate2[1] <= endDate1[1]:
-        truths[1] = True
-    
-    if startDate2[2] >= startDate1[2] and startDate2[2] <= endDate1[2]:
-        truths[2] = True
-    
-    if truths[0] and truths[1] and truths[2]:
-        return True
+    statements = []
+    temporary = ""
+    for i in fileoutput:
+        if i.replace(" ","")[0] == "#":
+            continue
+        temp = i.replace("\n","")
+        if len(temp) == 0:
+            continue
+        if temp.replace(" ","")[0] == "-":
+            if temporary == "":
+                continue
+            statements.append(temporary)
+            temporary = ""
+            continue
+        temporary += temp
+    return statements
 
+
+Database = CreateScript("Browser/Measles.sql")
+#print(Database)
+
+Scripts = CreateScript("Browser/SQLQueries")
+
+'''
+for i in statements:
+    print("----------------")
+    print(i)
+#print(statements)
+import sys
+sys.exit(0)
+'''
 
 import mysql.connector
 
 mydb = mysql.connector.connect(
     host="localhost",
     user="joel",
-    passwd="test",
-    database="Measles"
+    passwd="test"
 )
-
 mycursor = mydb.cursor()
-mycursor.execute("DROP TABLE DATA")
-mycursor.execute('''CREATE TABLE DATA (
-    ConditionName varchar(255),
-    ConditionSNOMED int(255),
-    PathogenName varchar(255),
-    PathogenTaxonID varchar(255),
-    Fatalities int(255),
-    CountryName varchar(255),
-    CountryISO varchar(255),
-    Admin1Name varchar(255),
-    Admin1ISO varchar(255),
-    Admin2Name varchar(255),
-    CityName varchar(255),
-    PeriodStartDay int(255),
-    PeriodStartMonth int(255),
-    PeriodStartYear int(255),
-    PeriodEndDay int(255),
-    PeriodEndMonth int(255),
-    PeriodEndYear int(255),
-    PartOfCumulativeCountSeries BOOL,
-    AgeRange varchar(255),
-    Subpopulation varchar(255),
-    PlaceOfAcquisition varchar(255),
-    DiagnosisCertainty varchar(255),
-    SourceName varchar(255),
-    CountValue varchar(255)
-    );''')
-    
+for i in Database[0:3]:
+    mycursor.execute(i,multi=True)
+mydb.commit()
+
+nydb = mysql.connector.connect(
+    host="localhost",
+    user="joel",
+    passwd="test",
+    database="Mea"
+)
+nycursor = nydb.cursor()
+
+for i in Database[3:]:
+    nycursor.execute(i,multi=True)
+nydb.commit()
+
+
+'''
 for row in reader:
     PeriodStart = row["PeriodStartDate"].split("-")
     PeriodStartDay = PeriodStart[2]
@@ -81,3 +82,7 @@ for row in reader:
     #break
 
 mydb.commit()
+'''
+'''for i in Scripts:
+    nycursor.execute(i,multi=True)
+nydb.commit()'''

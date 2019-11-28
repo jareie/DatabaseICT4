@@ -1,24 +1,24 @@
-ODB
-Location
+#ODB
+#Location
 INSERT INTO `Location`(`CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`)
     SELECT DISTINCT CountryName, CountryISO, Admin1Name, Admin1ISO, Admin2Name, CityName FROM Data
-
-TimePeriod - 8870
+-
+#TimePeriod - 8870
 INSERT INTO `TimePeriod`(`PeriodStartDay`,`PeriodStartMonth`,`PeriodStartYear`,`PeriodEndDay`,`PeriodEndMonth`,`PeriodEndYear`)
     SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear FROM Data
-
-Sickness
+-
+#Sickness
 INSERT INTO `Condition`(`ConditionName`,`ConditionSNOMED`,`PathogenName`,`PathogenTaxonID`)
     SELECT DISTINCT ConditionName, ConditionSNOMED, PathogenName, PathogenTaxonID from Data
-
-Events
+-
+#Events
 INSERT INTO `Events`(`LocationId`, `TimeId`, `ConditionSNOMED`, `PlaceOfAquisition`, `Fatalities`, `PartOfCumulativeSeries`, `CountValue`)
     SELECT l.Lid, t.Timeid, d.ConditionSNOMED, d.PlaceOfAcquisition, SUM(d.Fatalties), d.PartOfCumulativeCountSeries, SUM(d.CountValue)
     FROM DATA d, Location l, TimePeriod t
     WHERE (l.CountryName = d.CountryName AND l.CountryISO = d.CountryISO AND l.Admin1Name = d.Admin1Name AND l.Admin1ISO = d.Admin1ISO AND l.Admin2Name = d.Admin2Name AND l.CityName = d.CityName)
     AND (t.PeriodStartDay = d.PeriodStartDay AND t.PeriodStartMonth = d.PeriodStartMonth AND t.PeriodStartYear = d.PeriodStartYear AND t.PeriodEndDay = d.PeriodEndDay AND t.PeriodEndMonth = d.PeriodEndMonth AND t.PeriodEndYear = d.PeriodEndYear)
 	GROUP BY l.Lid, t.Timeid, d.ConditionSNOMED, d.PlaceOfAcquisition, d.PartOfCumulativeCountSeries
+-
 
-
-ADB
+#ADB
 
