@@ -13,8 +13,7 @@ if ($conn->connect_error) {
 echo "Connected successfully";
 
 // Create database
-$sql = "CREATE DATABASE IF NOT EXISTS `Measles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `Measles`";
+$sql = "CREATE DATABASE IF NOT EXISTS `Measles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
 
 if ($conn->query($sql) === TRUE) {
     echo "Database created successfully";

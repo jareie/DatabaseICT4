@@ -40,16 +40,78 @@ sys.exit(0)
 
 import mysql.connector
 
+Databases = [
+    "CREATE DATABASE IF NOT EXISTS `RawDataMeasles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "CREATE DATABASE IF NOT EXISTS `CleanedDataMeasles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci",
+    "CREATE DATABASE IF NOT EXISTS `Measles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci"
+]
+
 mydb = mysql.connector.connect(
     host="localhost",
     user="joel",
     passwd="test"
 )
 mycursor = mydb.cursor()
-for i in Database[0:3]:
-    mycursor.execute(i,multi=True)
-mydb.commit()
+for i in Databases:
+    try:
+        mycursor.execute(i)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        print(err)
+mycursor.close()
+mydb.close()
 
+#-----------------------------------
+
+
+nydb = mysql.connector.connect(
+    host="localhost",
+    user="joel",
+    passwd="test",
+    database="RawDataMeasles"
+)
+nycursor = nydb.cursor()
+try:
+    nycursor.execute("DROP TABLE IF EXISTS `DATA`;"
+        "CREATE TABLE IF NOT EXISTS `DATA` ("
+        "`ConditionName` varchar(255) DEFAULT NULL,"
+        "`ConditionSNOMED` int(255) DEFAULT NULL,"
+        "`PathogenName` varchar(255) DEFAULT NULL,"
+        "`PathogenTaxonID` varchar(255) DEFAULT NULL,"
+        "`Fatalities` int(255) DEFAULT NULL,"
+        "`CountryName` varchar(255) DEFAULT NULL,"
+        "`CountryISO` varchar(255) DEFAULT NULL,"
+        "`Admin1Name` varchar(255) DEFAULT NULL,"
+        "`Admin1ISO` varchar(255) DEFAULT NULL,"
+        "`Admin2Name` varchar(255) DEFAULT NULL,"
+        "`CityName` varchar(255) DEFAULT NULL,"
+        "`PeriodStartDay` int(255) DEFAULT NULL,"
+        "`PeriodStartMonth` int(255) DEFAULT NULL,"
+        "`PeriodStartYear` int(255) DEFAULT NULL,"
+        "`PeriodEndDay` int(255) DEFAULT NULL,"
+        "`PeriodEndMonth` int(255) DEFAULT NULL,"
+        "`PeriodEndYear` int(255) DEFAULT NULL,"
+        "`PartOfCumulativeCountSeries` tinyint(1) DEFAULT NULL,"
+        "`AgeRange` varchar(255) DEFAULT NULL,"
+        "`Subpopulation` varchar(255) DEFAULT NULL,"
+        "`PlaceOfAcquisition` varchar(255) DEFAULT NULL,"
+        "`DiagnosisCertainty` varchar(255) DEFAULT NULL,"
+        "`SourceName` varchar(255) DEFAULT NULL,"
+        "`CountValue` varchar(255) DEFAULT NULL"
+        ") ENGINE=InnoDB DEFAULT CHARSET=utf8",multi=True)
+except nysql.connector.Error as err:
+    print(err)
+nydb.commit()
+nycursor.close()
+nydb.close()
+
+
+
+
+import sys
+sys.exit(1)
+
+#=============================================================
 nydb = mysql.connector.connect(
     host="localhost",
     user="joel",
