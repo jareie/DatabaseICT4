@@ -225,9 +225,9 @@ $sqlLi = array(
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `Fatalities` int(11) NOT NULL,
   `CountValue` int(11) NOT NULL,
-  PRIMARY KEY (`LocationId`,`TimeId`,`ConditionSNOMED`,`PlaceOfAcquisition`)
-  FOREIGN KEY (LocationId) REFERENCES location(LocationId)
-  FOREIGN KEY (TimeId) REFERENCES time(TimeId)
+  PRIMARY KEY (`LocationId`,`TimeId`,`ConditionSNOMED`,`PlaceOfAcquisition`),
+  FOREIGN KEY (LocationId) REFERENCES location(LocationId),
+  FOREIGN KEY (TimeId) REFERENCES time(TimeId),
   FOREIGN KEY (ConditionSNOMED) REFERENCES condition(ConditionSNOMED)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ",
