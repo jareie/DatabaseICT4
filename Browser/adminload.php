@@ -225,12 +225,18 @@ $sqlLi = array(
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `Fatalities` int(11) NOT NULL,
   `CountValue` int(11) NOT NULL,
-  PRIMARY KEY (`LocationId`,`TimeId`,`ConditionSNOMED`,`PlaceOfAcquisition`),
-  FOREIGN KEY (LocationId) REFERENCES location(LocationId),
-  FOREIGN KEY (TimeId) REFERENCES time(TimeId),
-  FOREIGN KEY (ConditionSNOMED) REFERENCES condition(ConditionSNOMED)
+  PRIMARY KEY (`LocationId`,`TimeId`,`ConditionSNOMED`,`PlaceOfAcquisition`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ",
+"ALTER TABLE EventReports
+ADD CONSTRAINT FK_LocationId
+FOREIGN KEY (LocationId) REFERENCES location(LocationId);",
+"ALTER TABLE EventReports
+ADD CONSTRAINT FK_TimeId
+FOREIGN KEY (TimeId) REFERENCES time(TimeId);",
+"ALTER TABLE EventReports
+ADD CONSTRAINT FK_ConditionSNOMED
+FOREIGN KEY (ConditionSNOMED) REFERENCES condition(ConditionSNOMED);",
 "DROP TABLE IF EXISTS eventtemp",
 "
 CREATE TABLE eventtemp (
