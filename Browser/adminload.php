@@ -59,12 +59,8 @@ $sqlLi = array(
   Admin1ISO varchar(255) DEFAULT NULL,
   Admin2Name varchar(255) DEFAULT NULL,
   CityName varchar(255) DEFAULT NULL,
-  PeriodStartDay int(11) DEFAULT NULL,
-  PeriodStartMonth int(11) DEFAULT NULL,
-  PeriodStartYear int(11) DEFAULT NULL,
-  PeriodEndDay int(11) DEFAULT NULL,
-  PeriodEndMonth int(11) DEFAULT NULL,
-  PeriodEndYear int(11) DEFAULT NULL,
+  PeriodStartDate DATE NOT NULL,
+  PeriodEndDate DATE NOT NULL,
   PartOfCumulativeCountSeries tinyint(1) DEFAULT NULL,
   AgeRange varchar(255) DEFAULT NULL,
   Subpopulation varchar(255) DEFAULT NULL,
@@ -111,17 +107,13 @@ echo "Hello";
   `Admin1ISO` varchar(255) NOT NULL,
   `Admin2Name` varchar(255) NOT NULL,
   `CityName` varchar(255) NOT NULL,
-  `PeriodStartDay` int(11) NOT NULL,
-  `PeriodStartMonth` int(11) NOT NULL,
-  `PeriodStartYear` int(11) NOT NULL,
-  `PeriodEndDay` int(11) NOT NULL,
-  `PeriodEndMonth` int(11) NOT NULL,
-  `PeriodEndYear` int(11) NOT NULL,
+  `PeriodStartDate` DATE NOT NULL,
+  `PeriodEndDate` DATE NOT NULL,
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `SourceName` varchar(255) NOT NULL,
   `CountValue` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
-"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`, `PlaceOfAcquisition`, `SourceName`, `CountValue`) SELECT ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,PlaceOfAcquisition,SourceName,CountValue From data WHERE PartOfCumulativeCountSeries = 0");	
+"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `SourceName`, `CountValue`) SELECT ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PlaceOfAcquisition,SourceName,CountValue From data WHERE PartOfCumulativeCountSeries = 0");	
 			// Run a sql
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
@@ -139,20 +131,11 @@ $sqlLi = array(
 "DROP TABLE IF EXISTS `time`",
 "CREATE TABLE IF NOT EXISTS `time` (
   `TimeId` int(255) NOT NULL AUTO_INCREMENT,
-  `PeriodStartDay` int(11) NOT NULL,
-  `PeriodStartMonth` int(11) NOT NULL,
-  `PeriodStartYear` int(11) NOT NULL,
-  `PeriodEndDay` int(11) NOT NULL,
-  `PeriodEndMonth` int(11) NOT NULL,
-  `PeriodEndYear` int(11) NOT NULL,
-  `PeriodStartQuarter` int(11) NOT NULL,
+  `PeriodStartDate` DATE NOT NULL,
+  `PeriodEndDate` DATE NOT NULL,
   PRIMARY KEY (`TimeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-" INSERT INTO `time`(`PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`,`PeriodStartQuarter` ) SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1 from measles.cleaneddata",
-"UPDATE `time` SET `PeriodStartQuarter`=1 WHERE PeriodStartMonth=1 OR PeriodStartMonth=2 OR PeriodStartMonth=3",
-"UPDATE `time` SET `PeriodStartQuarter`=2 WHERE PeriodStartMonth=4 OR PeriodStartMonth=5 OR PeriodStartMonth=6",
-"UPDATE `time` SET `PeriodStartQuarter`=3 WHERE PeriodStartMonth=7 OR PeriodStartMonth=8 OR PeriodStartMonth=9",
-"UPDATE `time` SET `PeriodStartQuarter`=4 WHERE PeriodStartMonth=10 OR PeriodStartMonth=11 OR PeriodStartMonth=12"
+" INSERT INTO `time`(`PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`,`PeriodStartQuarter` ) SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1 from measles.cleaneddata"
 );
 
 			
@@ -220,12 +203,13 @@ $sqlLi = array(
 "DROP TABLE IF EXISTS `EventReports`;",
 "CREATE TABLE IF NOT EXISTS `EventReports` (
   `LocationId` int(255) NOT NULL,
-  `TimeId` int(11) NOT NULL,
   `ConditionSNOMED` int(255) NOT NULL,
+  `PeriodStartDate` DATE NOT NULL,
+  `PeriodEndDate` DATE NOT NULL,
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `Fatalities` int(11) NOT NULL,
   `CountValue` int(11) NOT NULL,
-  PRIMARY KEY (`LocationId`,`TimeId`,`ConditionSNOMED`,`PlaceOfAcquisition`)
+  PRIMARY KEY (`LocationId`,`PeriodStartDate`,`ConditionSNOMED`,`PlaceOfAcquisition`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ",
 "DROP TABLE IF EXISTS eventtemp",
@@ -242,27 +226,19 @@ CREATE TABLE eventtemp (
   Admin1ISO varchar(255) NOT NULL,
   Admin2Name varchar(255) NOT NULL,
   CityName varchar(255) NOT NULL,
-  PeriodStartDay int(11) NOT NULL,
-  PeriodStartMonth int(11) NOT NULL,
-  PeriodStartYear int(11) NOT NULL,
-  PeriodEndDay int(11) NOT NULL,
-  PeriodEndMonth int(11) NOT NULL,
-  PeriodEndYear int(11) NOT NULL,
+  PeriodStartDate DATE NOT NULL,
+  PeriodEndDate DATE NOT NULL,
   PlaceOfAcquisition varchar(255) NOT NULL,
   SourceName varchar(255) NOT NULL,
   CountValue varchar(255) NOT NULL
 )",
 "INSERT INTO eventtemp SELECT * FROM measles.cleaneddata",
 "ALTER TABLE eventtemp ADD LocID INT(11)",
-"ALTER TABLE eventtemp ADD timeID INT(11)",
 "ALTER TABLE eventtemp ADD pathID INT(11)",
 "UPDATE eventtemp
 SET eventtemp.LocID = (SELECT location.Lid FROM location
 WHERE location.CountryName = eventtemp.CountryName AND location.CountryISO = eventtemp.CountryISO AND location.Admin1Name = eventtemp.Admin1Name AND location.Admin1ISO = eventtemp.Admin1ISO AND location.Admin2Name = eventtemp.Admin2Name AND location.CityName = eventtemp.CityName)",
-"UPDATE eventtemp
-SET eventtemp.timeID = (SELECT time.TimeId FROM time
-WHERE time.PeriodStartDay = eventtemp.PeriodStartDay AND time.PeriodStartMonth = eventtemp.PeriodStartMonth AND time.PeriodStartYear = eventtemp.PeriodStartYear AND time.PeriodEndDay = eventtemp.PeriodEndDay AND time.PeriodEndMonth = eventtemp.PeriodEndMonth AND time.PeriodEndYear = eventtemp.PeriodEndYear)",
-"INSERT INTO EventReports(LocationId, TimeId, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue) SELECT LocID, timeID, ConditionSNOMED, PlaceOfAcquisition, MAX(Fatalities), SUM(CountValue) FROM eventtemp GROUP BY LocID, timeID, ConditionSNOMED, PlaceOfAcquisition",
+"INSERT INTO EventReports(LocationId,PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue) SELECT LocID, PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, MAX(Fatalities), SUM(CountValue) FROM eventtemp GROUP BY LocID, timeID, ConditionSNOMED, PlaceOfAcquisition",
 "DROP TABLE IF EXISTS eventtemp"
 /*"UPDATE eventtemp SET eventtemp.LocID=(SELECT l.Lid FROM location as l, eventtemp as d WHERE l.CountryName = d.CountryName AND l.CountryISO = d.CountryISO AND l.Admin1Name = d.Admin1Name AND l.Admin1ISO = d.Admin1ISO AND l.Admin2Name = d.Admin2Name AND l.CityName = d.CityName)"*/
 
