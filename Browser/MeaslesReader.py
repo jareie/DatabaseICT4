@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="joel",
     passwd="test",
-    database="RawDataMeasles"
+    database="measles"
 )
 mycursor = mydb.cursor()
 
@@ -29,7 +29,7 @@ for row in reader:
 
     string = "'" + row["ConditionName"] + "', " + row["ConditionSNOMED"] + ", '" + row["PathogenName"] + "', '" + row["PathogenTaxonID"] + "', " + row["Fatalities"] + ", '" + row["CountryName"] + "', '" + row["CountryISO"] + "', '" + row["Admin1Name"] + "', '" + row["Admin1ISO"] + "', '" + row["Admin2Name"] + "', '" + row["CityName"] + "', '" + row["PeriodStartDate"] + "', '" + row["PeriodEndDate"] + "', " + row["PartOfCumulativeCountSeries"] + ", '" + row["AgeRange"] + "', '" + row["Subpopulation"] + "', '" + row["PlaceOfAcquisition"] + "', '" + row["DiagnosisCertainty"] + "', '" + row["SourceName"] + "', " + row["CountValue"] + ""
     #print(string)
-    mycursor.execute('INSERT INTO DATA (ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PartOfCumulativeCountSeries,AgeRange,Subpopulation,PlaceOfAcquisition,DiagnosisCertainty,SourceName,CountValue) VALUES(' + string + ');')
+    mycursor.execute('INSERT INTO data (ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PartOfCumulativeCountSeries,AgeRange,Subpopulation,PlaceOfAcquisition,DiagnosisCertainty,SourceName,CountValue) VALUES(' + string + ');')
     
     count += 1
     if count >= amount:

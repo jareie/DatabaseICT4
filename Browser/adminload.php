@@ -238,7 +238,7 @@ CREATE TABLE eventtemp (
 "UPDATE eventtemp
 SET eventtemp.LocID = (SELECT location.Lid FROM location
 WHERE location.CountryName = eventtemp.CountryName AND location.CountryISO = eventtemp.CountryISO AND location.Admin1Name = eventtemp.Admin1Name AND location.Admin1ISO = eventtemp.Admin1ISO AND location.Admin2Name = eventtemp.Admin2Name AND location.CityName = eventtemp.CityName)",
-"INSERT INTO EventReports(LocationId,PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue) SELECT LocID, PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, MAX(Fatalities), SUM(CountValue) FROM eventtemp GROUP BY LocID, timeID, ConditionSNOMED, PlaceOfAcquisition",
+"INSERT INTO EventReports(LocationId,PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue) SELECT LocID, PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, MAX(Fatalities), SUM(CountValue) FROM eventtemp GROUP BY LocID, PeriodStartDate, PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition",
 "DROP TABLE IF EXISTS eventtemp"
 /*"UPDATE eventtemp SET eventtemp.LocID=(SELECT l.Lid FROM location as l, eventtemp as d WHERE l.CountryName = d.CountryName AND l.CountryISO = d.CountryISO AND l.Admin1Name = d.Admin1Name AND l.Admin1ISO = d.Admin1ISO AND l.Admin2Name = d.Admin2Name AND l.CityName = d.CityName)"*/
 
