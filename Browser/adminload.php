@@ -29,7 +29,7 @@
 		
 			<?php
       require_once('db_config.php');
-
+	
       $conn = new MySQLI($db_host,$db_user,$db_password);
 			// Create connection
 			
@@ -69,25 +69,19 @@ $sqlLi = array(
   CountValue varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 );
-
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
     if($conn->query($sqlLi[$x]) == FALSE) {
 	echo "Error: " . $conn->error;
     }
 }
-
 }
-
 if(isset($_POST['loadData'])){
 //require dirname(__FILE__) . "/MeaslesReader.py";
 //echo "python " . dirname(__FILE__) . "/MeaslesReader.py";
 	//popen("MeaslesReader.py","r");
-
 echo "Hello";
 }
-
-
 			if(isset($_POST['submit'])){
 			
 			// Generate sql
@@ -109,10 +103,9 @@ echo "Hello";
   `PeriodStartDate` DATE NOT NULL,
   `PeriodEndDate` DATE NOT NULL,
   `PlaceOfAcquisition` varchar(255) NOT NULL,
-  `SourceName` varchar(255) NOT NULL,
   `CountValue` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
-"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `SourceName`, `CountValue`) SELECT ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PlaceOfAcquisition,SourceName,CountValue From data WHERE PartOfCumulativeCountSeries = 0");	
+"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `CountValue`) SELECT ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PlaceOfAcquisition,CountValue From data WHERE PartOfCumulativeCountSeries = 0");	
 			// Run a sql
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
@@ -121,7 +114,6 @@ for($x = 0; $x < $arrlength; $x++) {
     }
 }
 }
-
 if(isset($_POST['fill'])){
 			
 			// Generate sql
@@ -136,7 +128,6 @@ $sqlLi = array(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 " INSERT INTO `time`(`PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`,`PeriodStartQuarter` ) SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1 from measles.cleaneddata"
 );
-
 			
 	$arrlength = count($sqlLi);
 	for($x = 0; $x < $arrlength; $x++) {
@@ -174,20 +165,17 @@ $sqlLi = array(
 "USE measlesodb",
 "DROP TABLE IF EXISTS `location`;",
 "CREATE TABLE IF NOT EXISTS `location` (
-  `Lid` int(255) NOT NULL AUTO_INCREMENT,
   `CountryName` varchar(255) NOT NULL,
   `CountryISO` varchar(255) NOT NULL,
   `Admin1Name` varchar(255) NOT NULL,
   `Admin1ISO` varchar(255) NOT NULL,
   `Admin2Name` varchar(255) NOT NULL,
   `CityName` varchar(255) NOT NULL,
-  `SourceName` varchar(255) NOT NULL,
-  PRIMARY KEY (`Lid`)
+  PRIMARY KEY (`Admin1ISO`,`CityName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
-"INSERT INTO `location`(`CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `SourceName`)
-    SELECT DISTINCT CountryName, CountryISO, Admin1Name, Admin1ISO, Admin2Name, CityName, SourceName from measles.cleaneddata"
+"INSERT INTO `location`(`CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`)
+    SELECT DISTINCT CountryName, CountryISO, Admin1Name, Admin1ISO, Admin2Name, CityName from measles.cleaneddata"
 );
-
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
     if($conn->query($sqlLi[$x]) == FALSE) {
@@ -195,69 +183,31 @@ for($x = 0; $x < $arrlength; $x++) {
     }
 }	
 }
-
 if(isset($_POST['Report'])){
 $sqlLi = array(
 "USE measlesodb",
 "DROP TABLE IF EXISTS `EventReports`;",
 "CREATE TABLE IF NOT EXISTS `EventReports` (
-  `LocationId` int(255) NOT NULL,
+  `Admin1ISO` varchar(255) NOT NULL,
+  `Admin2Name` varchar(255) NOT NULL,
+  `CityName` varchar(255) NOT NULL,
   `ConditionSNOMED` int(255) NOT NULL,
   `PeriodStartDate` DATE NOT NULL,
   `PeriodEndDate` DATE NOT NULL,
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `Fatalities` int(11) NOT NULL,
   `CountValue` int(11) NOT NULL,
-  PRIMARY KEY (`LocationId`,`PeriodStartDate`,`ConditionSNOMED`,`PlaceOfAcquisition`)
+  PRIMARY KEY (`Admin1ISO`,`Admin2Name`,`CityName`,`PeriodStartDate`,`ConditionSNOMED`,`PlaceOfAcquisition`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-",/*
-"DROP TABLE IF EXISTS eventtemp",
-"
-CREATE TABLE eventtemp (
-  ConditionName varchar(255) NOT NULL,
-  ConditionSNOMED int(11) NOT NULL,
-  PathogenName varchar(255) NOT NULL,
-  PathogenTaxonID varchar(255) NOT NULL,
-  Fatalities int(11) NOT NULL,
-  CountryName varchar(255) NOT NULL,
-  CountryISO varchar(255) NOT NULL,
-  Admin1Name varchar(255) NOT NULL,
-  Admin1ISO varchar(255) NOT NULL,
-  Admin2Name varchar(255) NOT NULL,
-  CityName varchar(255) NOT NULL,
-  PeriodStartDate DATE NOT NULL,
-  PeriodEndDate DATE NOT NULL,
-  PlaceOfAcquisition varchar(255) NOT NULL,
-  SourceName varchar(255) NOT NULL,
-  CountValue varchar(255) NOT NULL
-)",
-"INSERT INTO eventtemp SELECT * FROM measles.cleaneddata",
-"ALTER TABLE eventtemp ADD LocID INT(11)",
-"ALTER TABLE eventtemp ADD pathID INT(11)",
-"UPDATE eventtemp
-SET eventtemp.LocID = (SELECT location.Lid FROM location
-WHERE location.CountryName = eventtemp.CountryName AND location.CountryISO = eventtemp.CountryISO AND location.Admin1Name = eventtemp.Admin1Name AND location.Admin1ISO = eventtemp.Admin1ISO AND location.Admin2Name = eventtemp.Admin2Name AND location.CityName = eventtemp.CityName)",
-*/"INSERT INTO EventReports(LocationId,PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue)
-SELECT location.Lid, m.PeriodStartDate,m.PeriodEndDate, m.ConditionSNOMED, m.PlaceOfAcquisition, MAX(m.Fatalities), SUM(m.CountValue)
-FROM measles.cleaneddata as m,location
-WHERE location.CountryName = m.CountryName
-  AND location.CountryISO = m.CountryISO
-  AND location.Admin1Name = m.Admin1Name
-  AND location.Admin1ISO = m.Admin1ISO
-  AND location.Admin2Name = m.Admin2Name
-  AND location.CityName = m.CityName
-GROUP BY location.Lid, m.PeriodStartDate, m.PeriodEndDate, m.ConditionSNOMED, m.PlaceOfAcquisition"/*,
-"DROP TABLE IF EXISTS eventtemp"*/
-/*"UPDATE eventtemp SET eventtemp.LocID=(SELECT l.Lid FROM location as l, eventtemp as d WHERE l.CountryName = d.CountryName AND l.CountryISO = d.CountryISO AND l.Admin1Name = d.Admin1Name AND l.Admin1ISO = d.Admin1ISO AND l.Admin2Name = d.Admin2Name AND l.CityName = d.CityName)"*/
+",
 
-/*"INSERT INTO `EventReports`(`LocationID`, `ConditionSNOMED`, `TimeId`, `Fatalities`, `PlaceOfAcquisition`, `CountValue`) 
-SELECT  l.Lid, t.Timeid, d.ConditionSNOMED, d.PlaceOfAcquisition, SUM(d.Fatalities),SUM(d.CountValue)
-FROM measles.cleaneddata as d,time as t,location as l 
-WHERE (l.CountryName = d.CountryName AND l.CountryISO = d.CountryISO AND l.Admin1Name = d.Admin1Name AND l.Admin1ISO = d.Admin1ISO AND l.Admin2Name = d.Admin2Name AND l.CityName = d.CityName)
-    AND (t.PeriodStartDay = d.PeriodStartDay AND t.PeriodStartMonth = d.PeriodStartMonth AND t.PeriodStartYear = d.PeriodStartYear AND t.PeriodEndDay = d.PeriodEndDay AND t.PeriodEndMonth = d.PeriodEndMonth AND t.PeriodEndYear = d.PeriodEndYear)
-	GROUP BY l.Lid, t.Timeid, d.ConditionSNOMED, d.PlaceOfAcquisition"*/
+
+"INSERT INTO EventReports(Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate, ConditionSNOMED, PlaceOfAcquisition, Fatalities, CountValue)
+SELECT m.Admin1ISO,m.Admin2Name,m.CityName, m.PeriodStartDate,m.PeriodEndDate, m.ConditionSNOMED, m.PlaceOfAcquisition, MAX(m.Fatalities), SUM(m.CountValue)
+FROM measles.cleaneddata as m
+GROUP BY m.Admin1ISO, m.Admin2Name, m.CityName, m.PeriodStartDate, m.PeriodEndDate, m.ConditionSNOMED, m.PlaceOfAcquisition"
+
 );
-
 		
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
@@ -266,8 +216,6 @@ for($x = 0; $x < $arrlength; $x++) {
     }
 }		
 }
-
-
 if(isset($_POST['createadb'])){
 $sqlLi = array(
 "CREATE DATABASE IF NOT EXISTS `measlesadb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci",
@@ -280,18 +228,14 @@ $sqlLi = array(
   `PeriodStartQuarter` int(11) NOT NULL,
   PRIMARY KEY (`TimeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-
 "DROP TABLE IF EXISTS `locdim`",
 "CREATE TABLE IF NOT EXISTS `locdim` (
-  `LocId` int(11) NOT NULL AUTO_INCREMENT,
   `CountryName` varchar(255) NOT NULL,
   `CountryISO` varchar(255) NOT NULL,
   `Admin1Name` varchar(255) NOT NULL,
   `Admin1ISO` varchar(255) NOT NULL,
-  `SourceName` varchar(255) NOT NULL,
-  PRIMARY KEY (`LocId`)
+  PRIMARY KEY (`Admin1ISO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-
 "DROP TABLE IF EXISTS `conddim`",
 "CREATE TABLE IF NOT EXISTS `conddim` (
   `ConditionName` varchar(255) NOT NULL,
@@ -300,27 +244,24 @@ $sqlLi = array(
   `PathogenTaxonID` varchar(255) NOT NULL,
   PRIMARY KEY (`ConditionSNOMED`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-
 "DROP TABLE IF EXISTS `fact`",
 "CREATE TABLE IF NOT EXISTS `fact` (
   `TimeId` int(11) NOT NULL,
-  `LocId` int(11) NOT NULL,
+  `Admin1ISO` Varchar(255) NOT NULL,
   `ConditionSNOMED` varchar(255) NOT NULL,
+  `PlaceOfAcquisition` varchar(255) NOT NULL,
   `fatalities` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  PRIMARY KEY (`TimeId`,`LocId`,`ConditionSNOMED`)
+  PRIMARY KEY (`TimeId`,`Admin1ISO`,`ConditionSNOMED`,`PlaceOfAcquisition`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 );
-
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
     if($conn->query($sqlLi[$x]) == FALSE) {
 	echo "Error: " . $conn->error;
     }
 }
-
 }
-
 if(isset($_POST['insertadb'])){
 $sqlLi = array(
 "USE measlesadb",
@@ -337,31 +278,31 @@ FROM measlesodb.EventReports",
 SELECT DISTINCT ConditionName, ConditionSNOMED, PathogenName, PathogenTaxonID
 FROM measlesodb.condition",
 
-"INSERT INTO locdim(CountryName, CountryISO, Admin1Name, Admin1ISO, SourceName)
-SELECT DISTINCT CountryName, CountryISO, Admin1Name, Admin1ISO, SourceName
-FROM measlesodb.location",
 
-"INSERT INTO fact(TimeId,LocId,ConditionSNOMED,fatalities,count)
-SELECT timedim.TimeId, ev.LocationId, ev.ConditionSNOMED, MAX(ev.Fatalities), SUM(ev.CountValue)
+
+
+"INSERT INTO fact(TimeId,Admin1ISO,PlaceOfAcquisition,ConditionSNOMED,fatalities,count)
+SELECT timedim.TimeId, ev.Admin1ISO,ev.PlaceOfAcquisition, ev.ConditionSNOMED, MAX(ev.Fatalities), SUM(ev.CountValue)
 FROM measlesodb.EventReports as ev,timedim
-WHERE timedim.PeriodStartYear = EXTRACT(YEAR FROM ev.PeriodStartDate) AND timedim.PeriodStartMonth = EXTRACT(MONTH FROM ev.PeriodStartDate)
-GROUP BY timedim.TimeId, ev.LocationId, ev.ConditionSNOMED"
-);
+WHERE timedim.PeriodStartYear = EXTRACT(YEAR FROM ev.PeriodStartDate) 
+AND timedim.PeriodStartMonth = EXTRACT(MONTH FROM ev.PeriodStartDate)
+GROUP BY timedim.TimeId, ev.PlaceOfAcquisition, ev.Admin1ISO, ev.ConditionSNOMED",
 
+
+"INSERT INTO locdim(CountryName, CountryISO, Admin1Name, Admin1ISO)
+SELECT DISTINCT loc.CountryName, loc.CountryISO, loc.Admin1Name, loc.Admin1ISO
+FROM measlesodb.location as loc, fact
+Where fact.Admin1ISO = loc.Admin1ISO"
+
+);
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
     if($conn->query($sqlLi[$x]) == FALSE) {
 	echo "Error: " . $conn->error;
     }
-    echo "Query done: " . $sqlLi[$x];
+    echo "Query done: ";
 }
 }
-
-
-
-
-
-
 			// Close connection
 			mysqli_close($conn);
 			
