@@ -1,1 +1,1 @@
-Hallo velkommen
+The files that are used for the server is under the Server folder.
