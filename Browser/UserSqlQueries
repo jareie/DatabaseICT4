@@ -1,0 +1,17 @@
+SELECT * FROM conddim;
+
+SELECT * FROM locdim
+
+SELECT t.PeriodStartYear,t.PeriodStartMonth, l.CountryISO, l.Admin1ISO, c.ConditionSNOMED, f.fatalities, f.count FROM fact as f,locdim as l, timedim as t, conddim as c WHERE f.Admin1ISO = l.Admin1ISO AND f.TimeId = t.TimeId AND f.ConditionSNOMED = c.ConditionSNOMED ORDER BY l.Admin1ISO ASC
+
+SELECT l.Admin1ISO, SUM(f.count) FROM fact as f,locdim as l WHERE f.Admin1ISO = l.Admin1ISO GROUP BY l.Admin1ISO ASC
+
+SELECT PeriodStartYear, PeriodStartMonth, PeriodStartQuarter FROM timedim ORDER BY timedim.PeriodStartYear, timedim.PeriodStartMonth ASC
+
+_____________________________
+odb:
+SELECT EXTRACT(YEAR FROM f.PeriodStartDate),EXTRACT(MONTH FROM f.PeriodStartDate), l.CountryISO, f.Admin1ISO, ConditionSNOMED, MAX(f.Fatalities), SUM(f.CountValue) FROM EventReports as f, location as l WHERE f.Admin1ISO = l.Admin1ISO GROUP BY EXTRACT(YEAR FROM f.PeriodStartDate),EXTRACT(MONTH FROM f.PeriodStartDate), l.CountryISO, f.Admin1ISO, ConditionSNOMED
+
+SELECT EventReports.Admin1ISO, location.Admin1Name, SUM(EventReports.CountValue) FROM EventReports,location WHERE location.Admin1ISO = EventReports.Admin1ISO GROUP BY EventReports.Admin1ISO, location.Admin1Name
+
+SELECT EXTRACT(YEAR FROM PeriodStartDate), EXTRACT(MONTH FROM PeriodStartDate), IF(EXTRACT(MONTH FROM PeriodStartDate) < 4,1, IF(EXTRACT(MONTH FROM PeriodStartDate) < 7,2, IF(EXTRACT(MONTH FROM PeriodStartDate) < 10, 3, 4))) FROM EventReports ORDER BY EXTRACT(YEAR FROM PeriodStartDate), EXTRACT(MONTH FROM PeriodStartDate) ASC

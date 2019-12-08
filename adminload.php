@@ -105,7 +105,9 @@ echo "Hello";
   `PlaceOfAcquisition` varchar(255) NOT NULL,
   `CountValue` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
-"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `CountValue`) SELECT ConditionName,ConditionSNOMED,PathogenName,PathogenTaxonID,Fatalities,CountryName,CountryISO,Admin1Name,Admin1ISO,Admin2Name,CityName,PeriodStartDate,PeriodEndDate,PlaceOfAcquisition,CountValue From data WHERE PartOfCumulativeCountSeries = 0");	
+"INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `CountValue`)
+SELECT ConditionName, ConditionSNOMED, PathogenName, PathogenTaxonID, Fatalities, CountryName, CountryISO, Admin1Name, Admin1ISO, Admin2Name, CityName, PeriodStartDate, PeriodEndDate, PlaceOfAcquisition, CountValue
+FROM data WHERE PartOfCumulativeCountSeries = 0");	
 			// Run a sql
 $arrlength = count($sqlLi);
 for($x = 0; $x < $arrlength; $x++) {
@@ -126,7 +128,9 @@ $sqlLi = array(
   `PeriodEndDate` DATE NOT NULL,
   PRIMARY KEY (`TimeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-" INSERT INTO `time`(`PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`,`PeriodStartQuarter` ) SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1 from measles.cleaneddata"
+"INSERT INTO `time`(`PeriodStartDay`, `PeriodStartMonth`, `PeriodStartYear`, `PeriodEndDay`, `PeriodEndMonth`, `PeriodEndYear`,`PeriodStartQuarter` )
+SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1
+FROM measles.cleaneddata"
 );
 			
 	$arrlength = count($sqlLi);
