@@ -1,40 +1,102 @@
 <HTML>
-<head>
-<title>Admin Page</title>
-</head>
-<body>
-<nav>
-  <ul>
-    <li><a href="index.php"><strong>Home</strong></li>
-    <li><a href="adminload.php">Admin</a></li>
-  </ul>
-</nav>
 
-<form name="queryInput" action="adminload.php" method="POST">
-  <input name ="createDb" type="submit" value="Create Database">
-  <input name ="loadData" type="submit" value="Load Data">
-  <input name ="submit" type="submit" value="Clean Rawdata">
-  <input name ="Sick" type="submit" value="Condition table">
-  <input name ="Loc" type="submit" value="Location table">
-  <input name ="Report" type="submit" value="Reports table">
-  <input name ="createadb" type="submit" value="Create ADB">
-  <input name ="insertadb" type="submit" value="Add data to ADB">
-</form>
-		
-		
-<?php
+<head>
+    <title>Analytical Database</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link href="dashboard.css" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Data Warehouse</a>
+        <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#">Sign out</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.php">
+                                <span data-feather="home"> Home </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="standarduser.php">
+                                <span data-feather="file"> Standard User </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="standardadmin.php">
+                                <span data-feather="file"> Standard Admin </span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="adminload.php">
+                                <span data-feather="home"></span> DB Load <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Database Loading</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                    </div>
+                </div>
+
+                <form name="queryInput" action="adminload.php" method="POST">
+                    <button name="createDb" type="submit" class="btn btn-primary my-2">1. Create Databse</button>
+                    <button name="loadData" type="submit" class="btn btn-primary my-2">2. Load Data</button>
+                    <button name="submit" type="submit" class="btn btn-primary my-2">3. Clean Rawdata</button>
+                    <button name="Sick" type="submit" class="btn btn-primary my-2">4. Condition table</button>
+                    <button name="Loc" type="submit" class="btn btn-primary my-2">5. Location table</button>
+                    <button name="Report" type="submit" class="btn btn-primary my-2">6. Reports table</button>
+                    <button name="createadb" type="submit" class="btn btn-primary my-2">7. Create ADB</button>
+                    <button name="insertadb" type="submit" class="btn btn-primary my-2">8. Add data to ADB</button>
+                </form>
+
+                <?php
   require_once('db_config.php');
 
   $conn = new MySQLI($db_host,$db_user,$db_password);
   // Create connection
-        
-        
+
   // Check connection
   if ($conn->connect_error) {
       die("Connection failed: " . $conn->connect_error);
-  } 
+  }
   echo "<p><font color=\"red\">Connected successfully</font></p>";
-        
+
   if(isset($_POST['createDb'])){
     $sqlLi = array(
       "CREATE DATABASE IF NOT EXISTS `measles` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci",
@@ -72,16 +134,16 @@
     }
     echo "Query done";
   }
-  
+
   if(isset($_POST['loadData'])){
   //require dirname(__FILE__) . "/MeaslesReader.py";
   //echo "python " . dirname(__FILE__) . "/MeaslesReader.py";
     //popen("MeaslesReader.py","r");
-    echo "This functionality is unaviable at the moment. Please use the PythonScripts: load.py and MeaslesReader.py";
+    echo "This functionality is unavailable at the moment. Please use the Python scripts: load.py and MeaslesReader.py";
   }
-  
+
   if(isset($_POST['submit'])){
-        
+
     // Generate sql
     $sqlLi = array(
       "USE measles",
@@ -106,7 +168,7 @@
       "INSERT INTO `cleaneddata`(`ConditionName`, `ConditionSNOMED`, `PathogenName`, `PathogenTaxonID`, `Fatalities`, `CountryName`, `CountryISO`, `Admin1Name`, `Admin1ISO`, `Admin2Name`, `CityName`, `PeriodStartDate`, `PeriodEndDate`, `PlaceOfAcquisition`, `CountValue`)
       SELECT ConditionName, ConditionSNOMED, PathogenName, PathogenTaxonID, Fatalities, CountryName, CountryISO, Admin1Name, Admin1ISO, Admin2Name, CityName, PeriodStartDate, PeriodEndDate, PlaceOfAcquisition, CountValue
       FROM data WHERE PartOfCumulativeCountSeries = 0"
-      );	
+      );
         // Run a sql
     $arrlength = count($sqlLi);
     for($x = 0; $x < $arrlength; $x++) {
@@ -117,7 +179,7 @@
     echo "Query done";
   }
   if(isset($_POST['fill'])){
-        
+
     // Generate sql
     $sqlLi = array(
       "USE measlesodb",
@@ -132,7 +194,7 @@
       SELECT DISTINCT PeriodStartDay,PeriodStartMonth,PeriodStartYear,PeriodEndDay,PeriodEndMonth,PeriodEndYear,1
       FROM measles.cleaneddata"
       );
-        
+
     $arrlength = count($sqlLi);
     for($x = 0; $x < $arrlength; $x++) {
         if($conn->query($sqlLi[$x]) == FALSE) {
@@ -141,7 +203,7 @@
     }
     echo "Query done";
   }
-        
+
   if(isset($_POST['Sick'])){
     $sqlLi = array(
       "USE measlesodb",
@@ -166,7 +228,7 @@
     }
     echo "Query done";
   }
-        
+
   if(isset($_POST['Loc'])){
     $sqlLi = array(
       "USE measlesodb",
@@ -214,14 +276,14 @@
       FROM measles.cleaneddata as m
       GROUP BY m.Admin1ISO, m.Admin2Name, m.CityName, m.PeriodStartDate, m.PeriodEndDate, m.ConditionSNOMED, m.PlaceOfAcquisition"
       );
-      
+
     $arrlength = count($sqlLi);
     for($x = 0; $x < $arrlength; $x++) {
         if($conn->query($sqlLi[$x]) == FALSE) {
       echo "Error: " . $conn->error . $sqlLi[$x];
         }
     }
-    echo "Query done";	
+    echo "Query done";
   }
   if(isset($_POST['createadb'])){
     $sqlLi = array(
@@ -289,7 +351,7 @@
       "INSERT INTO fact(TimeId,Admin1ISO,PlaceOfAcquisition,ConditionSNOMED,fatalities,count)
       SELECT timedim.TimeId, ev.Admin1ISO,ev.PlaceOfAcquisition, ev.ConditionSNOMED, MAX(ev.Fatalities), SUM(ev.CountValue)
       FROM measlesodb.EventReports as ev,timedim
-      WHERE timedim.PeriodStartYear = EXTRACT(YEAR FROM ev.PeriodStartDate) 
+      WHERE timedim.PeriodStartYear = EXTRACT(YEAR FROM ev.PeriodStartDate)
       AND timedim.PeriodStartMonth = EXTRACT(MONTH FROM ev.PeriodStartDate)
       GROUP BY timedim.TimeId, ev.PlaceOfAcquisition, ev.Admin1ISO, ev.ConditionSNOMED",
       "INSERT INTO locdim(CountryName, CountryISO, Admin1Name, Admin1ISO)
@@ -297,7 +359,7 @@
       FROM measlesodb.location as loc, fact
       Where fact.Admin1ISO = loc.Admin1ISO"
       );
-    
+
     $arrlength = count($sqlLi);
     for($x = 0; $x < $arrlength; $x++) {
       if($conn->query($sqlLi[$x]) == FALSE) {
@@ -310,6 +372,10 @@
   // Close connection
   mysqli_close($conn);
 ?>
-	
+            </main>
+        </div>
+    </div>
+
 </body>
+
 </HTML>
