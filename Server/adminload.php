@@ -63,16 +63,55 @@
                     <div class="btn-toolbar mb-2 mb-md-0">
                     </div>
                 </div>
+                <div class="">
+                    <form class="form-horizontal" method="POST">
+                        <fieldset>
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="delete">Delete</label>
+                                <div class="col-md-8">
+                                    <input id="delete" name="delete" type="text" placeholder="" class="form-control input-md" required="">
+                                </div>
+                            </div>
 
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="from">From</label>
+                                <div class="col-md-8">
+                                    <input id="from" name="from" type="text" placeholder="" class="form-control input-md" required="">
+
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="where">Where</label>
+                                <div class="col-md-8">
+                                    <input id="where" name="where" type="text" placeholder="" class="form-control input-md">
+
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="submit"></label>
+                                <div class="col-md-4">
+                                    <button id="submit" name="queryInput" value="submit" class="btn btn-success">Submit</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </form>
+                </div>
                 <form name="queryInput" action="adminload.php" method="POST">
-                    <button name="createDb" type="submit" class="btn btn-primary my-2">1. Create Databse</button>
-                    <button name="loadData" type="submit" class="btn btn-primary my-2">2. Load Data</button>
-                    <button name="submit" type="submit" class="btn btn-primary my-2">3. Clean Rawdata</button>
-                    <button name="Sick" type="submit" class="btn btn-primary my-2">4. Condition table</button>
-                    <button name="Loc" type="submit" class="btn btn-primary my-2">5. Location table</button>
-                    <button name="Report" type="submit" class="btn btn-primary my-2">6. Reports table</button>
-                    <button name="createadb" type="submit" class="btn btn-primary my-2">7. Create ADB</button>
-                    <button name="insertadb" type="submit" class="btn btn-primary my-2">8. Add data to ADB</button>
+                    <button name="createDb"   type="submit" class="btn btn-primary my-2">1. Create Databse</button>
+                    <button name="loadData"   type="submit" class="btn btn-primary my-2">2. Load Data</button>
+                    <button name="submit"     type="submit" class="btn btn-primary my-2">3. Clean Rawdata</button>
+                    <button name="Sick"       type="submit" class="btn btn-primary my-2">4. Condition table</button>
+                    <button name="Loc"        type="submit" class="btn btn-primary my-2">5. Location table</button>
+                    <button name="Report"     type="submit" class="btn btn-primary my-2">6. Reports table</button>
+                    <button name="createadb"  type="submit" class="btn btn-primary my-2">7. Create ADB</button>
+                    <button name="insertadb"  type="submit" class="btn btn-primary my-2">8. Add data to ADB</button>
                 </form>
 
 <?php
@@ -358,6 +397,48 @@
       }
     }
     echo "Query done";
+  }
+
+  if(isset($_POST['queryInput'])){
+    $select = $_POST["delete"];
+    $from = $_POST["from"];
+    $where = $_POST["where"];
+    
+    if ($select == "" || $from == "")
+    {
+      die("Please provide input in select and from fields.");
+    }
+  
+    $sql = "delete ".$select." from ".$from;
+    if (trim($where) != "" )
+    {
+      $sql = $sql." where ".$where;
+    }
+    echo "<p><font color=\"red\">".$sql."</font></p>";
+  
+  
+    // Run a sql
+    $result = $conn->query($sql);
+    
+    echo "Query done";
+    if($result){
+      echo "<table border=1px>";
+      while($row = $result->fetch_assoc())
+      {
+        echo "<tr>";
+        foreach($row as $key=>$value)
+        {
+          echo "<td>$value</td>";
+        }
+        echo "</tr>";
+      }
+      echo "</table>";
+    } else {
+      echo "Error: " . $conn->error;
+    }
+  
+    $result->free();
+  
   }
 
   // Close connection
