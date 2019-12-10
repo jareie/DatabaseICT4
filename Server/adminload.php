@@ -66,14 +66,15 @@
                 <div class="">
                     <form class="form-horizontal" method="POST">
                         <fieldset>
-                            <!-- Text input-->
-                            <div class="form-group">
                                 <label class="col-md-4 control-label" for="delete">Delete</label>
+
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="database">Database</label>
                                 <div class="col-md-8">
-                                    <input id="delete" name="delete" type="text" placeholder="" class="form-control input-md" required="">
+                                    <input id="database" name="database" type="text" placeholder="" class="form-control input-md" required="">
+
                                 </div>
                             </div>
-
                             <!-- Text input-->
                             <div class="form-group">
                                 <label class="col-md-4 control-label" for="from">From</label>
@@ -400,16 +401,18 @@
   }
 
   if(isset($_POST['queryInput'])){
-    $select = $_POST["delete"];
+    $database = $_POST["database"];
     $from = $_POST["from"];
     $where = $_POST["where"];
     
-    if ($select == "" || $from == "")
+    if ($from == "" || $where== "")
     {
-      die("Please provide input in select and from fields.");
+      die("Please provide input in from and where fields.");
     }
-  
-    $sql = "delete ".$select." from ".$from;
+    
+    $result = $conn->query("USE ". trim($database));
+    
+    $sql ="delete "."from ".$from;
     if (trim($where) != "" )
     {
       $sql = $sql." where ".$where;
