@@ -49,16 +49,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="standarduser.php">
-                                <span data-feather="file"> Standard User </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="standardadmin.php">
-                                <span data-feather="file"> Standard Admin </span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link active" href="adminload.php">
                                 <span data-feather="home"></span> DB Load <span class="sr-only">(current)</span>
                             </a>

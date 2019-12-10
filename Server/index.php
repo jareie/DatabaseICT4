@@ -50,7 +50,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="adminload.php">
-                                <span data-feather="file">DB Loading</span>
+                                <span data-feather="file">DB Load</span>
                             </a>
                         </li>
                     </ul>
@@ -107,11 +107,12 @@
                 </div>
 
 <form name="queries" action="index.php" method="POST">
-	<input name="stateCount" type="submit" value="Get Count By State">
-	<input name="All" type="submit" value="Get Event For Time And State">
-	<input name="Year" type="submit" value="Get Count By Year">
-	<input name ="Conditions" type="submit" value="Get Conditions">
-	<input name ="Locations" type="submit" value="Get Locations">
+	<button name="stateCount" type="submit" class="btn btn-primary my-2">Get Count By State</button>
+	<button name="All" type="submit" class="btn btn-primary my-2">Get Event For Time And State</button>
+	<button name="Year" type="submit" class="btn btn-primary my-2">Get Count By Year</button>
+	<button name="Quarter" type="submit" class="btn btn-primary my-2">Get Count By Quarter</button>
+	<button name ="Conditions" type="submit" class="btn btn-primary my-2">Get Conditions</button>
+	<button name ="Locations" type="submit" class="btn btn-primary my-2">Get Locations</button>
 </form>
 		
 <?php
@@ -235,7 +236,7 @@ if(isset($_POST['Quarter'])){
 }
 
 if(isset($_POST['Year'])){
-	$sql = "SELECT PeriodStartYear, COUNT(count)
+	$sql = "SELECT PeriodStartYear, SUM(count)
 	FROM fact,timedim WHERE timedim.TimeId = fact.TimeId
 	GROUP BY PeriodStartYear
 	ORDER BY timedim.PeriodStartYear

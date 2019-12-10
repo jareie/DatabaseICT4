@@ -1,6 +1,6 @@
 <?php
 $db_host = 'localhost';
-$db_user = 'joel';
-$db_password = 'test';
+$db_user = 'user';
+$db_password = 'user';
 $db_database = 'measlesadb';
 ?>
