@@ -85,8 +85,9 @@
                     <button name="insertadb" type="submit" class="btn btn-primary my-2">8. Add data to ADB</button>
                 </form>
 
-                <?php
-  require_once('db_config.php');
+<?php
+  require_once('Admin_DB.php');
+
 
   $conn = new MySQLI($db_host,$db_user,$db_password);
   // Create connection

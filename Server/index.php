@@ -49,18 +49,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="standarduser.php">
-                                <span data-feather="file">Standard User</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="standardadmin.php">
-                                <span data-feather="file">Standard Admin</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="adminload.php">
-                                <span data-feather="file">DB Load</span>
+                                <span data-feather="file">DB Loading</span>
                             </a>
                         </li>
                     </ul>
@@ -108,7 +98,7 @@
                             <div class="form-group">
                                 <label class="col-md-4 control-label" for="submit"></label>
                                 <div class="col-md-4">
-                                    <button id="submit" name="submit" value="submit" class="btn btn-success">Submit</button>
+                                    <button id="submit" name="queryInput" value="submit" class="btn btn-success">Submit</button>
                                 </div>
                             </div>
 
@@ -116,63 +106,304 @@
                     </form>
                 </div>
 
-                <?php
+<form name="queries" action="index.php" method="POST">
+	<input name="stateCount" type="submit" value="Get Count By State">
+	<input name="All" type="submit" value="Get Event For Time And State">
+	<input name="Year" type="submit" value="Get Count By Year">
+	<input name ="Conditions" type="submit" value="Get Conditions">
+	<input name ="Locations" type="submit" value="Get Locations">
+</form>
+		
+<?php
+//Create Connection
+require_once('User_DB.php');
+$conn = new MySQLI($db_host,$db_user,$db_password,$db_database);
 
-			if(isset($_POST['queryInput'])){
-			$select = $_POST["select"];
-			$from = $_POST["from"];
-			$where = $_POST["where"];
-			if ($select == "" || $from == "")
+// Check connection
+if ($conn->connect_error) {
+	die("Connection failed: " . $conn->connect_error);
+} 
+echo "<p><font color=\"red\">Connected successfully</font></p>";
+
+if(isset($_POST['stateCount'])){
+	$sql = "SELECT Admin1Name,
+		Sum(count) AS total
+		FROM   fact AS f,
+		locdim AS l
+		WHERE  f.Admin1ISO = l.Admin1ISO
+		GROUP  BY Admin1Name
+		ORDER  BY total DESC";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
 			{
-				die("Please provide input in select and from fields.");
+				echo "<td>$value</td>";
 			}
-			// Generate sql
-			$sql = "select ".$select." from ".$from;
-			if (trim($where) != "" )
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['All'])){
+	$sql = "SELECT t.PeriodStartYear,
+		t.PeriodStartMonth,
+		l.CountryISO,
+		l.Admin1ISO,
+		c.ConditionSNOMED,
+		f.fatalities,
+		f.count
+ FROM   fact AS f,
+		locdim AS l,
+		timedim AS t,
+		conddim AS c
+ WHERE  f.Admin1ISO = l.Admin1ISO
+		AND f.TimeId = t.TimeId
+		AND f.ConditionSNOMED = c.ConditionSNOMED
+ ORDER  BY l.Admin1ISO ASC";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
 			{
-				$sql = $sql." where ".$where;
+				echo "<td>$value</td>";
 			}
-			echo "<p><font color=\"red\">".$sql."</font></p>";
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
 
-			// Create connection
-			$servername = "localhost";
-			$username = "joel";
-			$password = "test";
-			$database = "curdb";
-			$conn = new mysqli($servername, $username, $password,$database);
+	$result->free();
 
-			// Check connection
-			if ($conn->connect_error) {
-			    die("Connection failed: " . $conn->connect_error);
-			}
-			echo "<p><font color=\"red\">Connected successfully</font></p>";
+	// Close connection
+	mysqli_close($conn);
+}
 
-			// Run a sql
-			$result = $conn->query($sql);
-			if ($result)
+if(isset($_POST['Quarter'])){
+	$sql = "SELECT PeriodStartYear, PeriodStartQuarter, COUNT(count)
+	FROM fact,timedim
+	WHERE timedim.TimeId = fact.TimeId
+	GROUP BY PeriodStartYear,PeriodStartQuarter
+	ORDER BY PeriodStartYear,PeriodStartQuarter
+	ASC";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
 			{
-				echo "<table border=1px>";
-				while($row = $result->fetch_assoc())
-				{
-					echo "<tr>";
-					foreach($row as $key=>$value)
-					{
-						echo "<td>$value</td>";
-					}
-					echo "</tr>";
-				}
-				echo "</table>";
+				echo "<td>$value</td>";
 			}
-			$result->free();
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
 
-			// Close connection
-			mysqli_close($conn);
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['Year'])){
+	$sql = "SELECT PeriodStartYear, COUNT(count)
+	FROM fact,timedim WHERE timedim.TimeId = fact.TimeId
+	GROUP BY PeriodStartYear
+	ORDER BY timedim.PeriodStartYear
+	ASC ";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
+			{
+				echo "<td>$value</td>";
 			}
-		?>
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['Conditions'])){
+	$sql = "SELECT * FROM conddim;";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
+			{
+				echo "<td>$value</td>";
+			}
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['Locations'])){
+	$sql = "SELECT * FROM locdim";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
+			{
+				echo "<td>$value</td>";
+			}
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['createDb'])){
+	$sql =
+		"SELECT PeriodStartYear,
+		PeriodStartMonth,
+		PeriodStartQuarter
+ FROM   timedim
+ ORDER  BY timedim.PeriodStartYear,
+		   timedim.PeriodStartMonth ASC";
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
+			{
+				echo "<td>$value</td>";
+			}
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+
+if(isset($_POST['queryInput'])){
+	$select = $_POST["select"];
+	$from = $_POST["from"];
+	$where = $_POST["where"];
+	
+	if ($select == "" || $from == "")
+	{
+		die("Please provide input in select and from fields.");
+	}
+
+	$sql = "select ".$select." from ".$from;
+	if (trim($where) != "" )
+	{
+		$sql = $sql." where ".$where;
+	}
+	echo "<p><font color=\"red\">".$sql."</font></p>";
+
+
+	// Run a sql
+	$result = $conn->query($sql);
+	
+	echo "Query done";
+	if($result){
+		echo "<table border=1px>";
+		while($row = $result->fetch_assoc())
+		{
+			echo "<tr>";
+			foreach($row as $key=>$value)
+			{
+				echo "<td>$value</td>";
+			}
+			echo "</tr>";
+		}
+		echo "</table>";
+	} else {
+		echo "Error: " . $conn->error;
+	}
+
+	$result->free();
+
+	// Close connection
+	mysqli_close($conn);
+}
+?>
 
             </main>
         </div>
-    </div>
+    </div>	
 </body>
 
 </HTML>

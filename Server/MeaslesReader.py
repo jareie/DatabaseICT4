@@ -1,5 +1,5 @@
 import csv
-csvfile = open('Browser/measles.csv')
+csvfile = open('measles.csv')
 reader = csv.DictReader(csvfile)
 
 
